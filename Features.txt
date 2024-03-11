@@ -1,0 +1,14 @@
+Features:
+
+1. Temp Spoof
+  | 1. EasyAntiCheat
+  | 2. BattleEye
+2. Chang MAC
+  | 1. Custom MAC
+  | 2. Random MAC
+3. PC Spoof
+  | 1. Spoof Disks
+  | 2. Spoof GUID
+4. Network
+  | 1. Fix Network
+  | 2. Flush DNS
