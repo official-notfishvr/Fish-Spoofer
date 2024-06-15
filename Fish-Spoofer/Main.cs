@@ -1,132 +1,107 @@
-﻿using Microsoft.Win32;
+﻿using Fish_Tools.core.Utils;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Fish_Spoofer
 {
     public class Program
     {
-        public static string KDMapperURL = "https://cdn.discordapp.com/attachments/1181389681775104020/1207941305595076659/kdmapper.exe?ex=65e17a01&is=65cf0501&hm=d396fd009cf4d45a50165053001f8234ef0e50476b09379ce6e6e480aa12f017&";
-        public static string drvURL = "https://cdn.discordapp.com/attachments/1181389681775104020/1207941334820716554/HelloWorld.sys?ex=65e17a08&is=65cf0508&hm=dc4e484831df412337970e4622e416fa6b7a2583354c8bdfb13197dd52e2677b&";
-        public static string MapExePath = @"C:\Windows\map.exe";
-        public static string MapdrvPath = @"C:\Windows\mapdrv.sys";
+        public const string KDMapperURL = "https://raw.githubusercontent.com/official-notfishvr/notfishvr.dev-cdn/main/kdmapper.exe";
+        public const string drvURL = "https://raw.githubusercontent.com/official-notfishvr/notfishvr.dev-cdn/main/HelloWorld.sys";
+        public const string MapExePath = @"C:\Windows\map.exe";
+        public const string MapdrvPath = @"C:\Windows\mapdrv.sys";
 
-        static void Main(string[] args)
+        static void Main(string[] args) { Logger logger = new Logger(); if (!Utils.IsAdministrator()) { Utils.RunAsAdministrator(); return; } MainMenu(logger); }
+        public static void MainMenu(Logger logger)
         {
-            if (!Utils.IsAdministrator()) { Utils.RunAsAdministrator(); return; }
-
             Console.Clear();
             Console.Title = "Fish Spoofer";
-            Console.WriteLine();
-            UI.WriteLineAlt("Fish Spoofer");
-            UI.WriteSpacing(true);
-            UI.WriteBarrierLine("1", "Temp Spoof");
-            UI.WriteBarrierLine("2", "Chang MAC");
-            UI.WriteBarrierLine("3", "PC Spoof");
-            UI.WriteBarrierLine("4", "Network");
-            UI.WriteSpacing(true);
-            UI.WriteSpacing(false);
-            Console.Write("   -> ");
-            string choice = Console.ReadLine();
-            if (choice == "1") { TempSpoof(); }
-            if (choice == "2") { MACSpoof(); }
-            if (choice == "3") { PCSpoof(); }
-            if (choice == "4") { NetworkSpoof(); }
+            logger.PrintArt();
+            logger.WriteBarrierLine("1", "Temp Spoof");
+            logger.WriteBarrierLine("2", "PC Spoof");
+            logger.WriteBarrierLine("3", "Network");
+            Console.Write("-> ");
+            ConsoleKey choice = Console.ReadKey().Key;
+            if (choice == ConsoleKey.D1) { TempSpoof(logger); }
+            if (choice == ConsoleKey.D2) { PCSpoof(logger); }
+            if (choice == ConsoleKey.D3) { NetworkSpoof(logger); }
+            MainMenu(logger);
         }
-        public static void TempSpoof()
+        public static void TempSpoof(Logger logger)
         {
             Console.Clear();
             Console.Title = "Fish Spoofer";
-            Console.WriteLine();
-            UI.WriteLineAlt("Fish Spoofer");
-            UI.WriteSpacing(true);
-            UI.WriteBarrierLine("0", "Back");
-            UI.WriteBarrierLine("1", "EasyAntiCheat");
-            UI.WriteBarrierLine("2", "BattleEye");
-            UI.WriteSpacing(true);
-            UI.WriteSpacing(false);
-            Console.Write("   -> ");
-            string choice = Console.ReadLine();
-            if (choice == "0") { Main(null); }
-            if (choice == "1") { Spoof.SpoofEAC(); }
-            else if (choice == "2") { Spoof.SpoofBE(); }
-            TempSpoof();
+            logger.PrintArt();
+            logger.WriteBarrierLine("0", "Back");
+            logger.WriteBarrierLine("1", "EasyAntiCheat");
+            logger.WriteBarrierLine("2", "BattleEye");
+            Console.Write("-> ");
+            ConsoleKey choice = Console.ReadKey().Key;
+            if (choice == ConsoleKey.D0) { MainMenu(logger); }
+            if (choice == ConsoleKey.D1) { Spoof.SpoofEAC(logger); }
+            else if (choice == ConsoleKey.D2) { Spoof.SpoofBE(logger); }
+            TempSpoof(logger);
         }
-        public static void MACSpoof()
+        public static void PCSpoof(Logger logger)
         {
             Console.Clear();
             Console.Title = "Fish Spoofer";
-            Console.WriteLine();
-            UI.WriteLineAlt("Fish Spoofer");
-            UI.WriteSpacing(true);
-            UI.WriteBarrierLine("0", "Back");
-            UI.WriteBarrierLine("1", "Custom MAC");
-            UI.WriteBarrierLine("2", "Random MAC");
-            UI.WriteSpacing(true);
-            UI.WriteSpacing(false);
-            Console.Write("   -> ");
-            string choice = Console.ReadLine();
-            if (choice == "0") { Main(null); }
-            if (choice == "1")
+            logger.PrintArt();
+            logger.WriteBarrierLine("0", "Back");
+            logger.WriteBarrierLine("1", "Spoof Disks");
+            logger.WriteBarrierLine("2", "Spoof GUID");
+            logger.WriteBarrierLine("3", "Chang MAC");
+            Console.Write("-> ");
+            ConsoleKey choice = Console.ReadKey().Key;
+            if (choice == ConsoleKey.D0) { MainMenu(logger); }
+            if (choice == ConsoleKey.D1) { Spoof.SpoofDisks(); }
+            if (choice == ConsoleKey.D2) { Spoof.SpoofGUID(); }
+            if (choice == ConsoleKey.D3) { MACSpoof(logger); }
+            PCSpoof(logger);
+        }
+        public static void MACSpoof(Logger logger)
+        {
+            Console.Clear();
+            Console.Title = "Fish Spoofer";
+            logger.PrintArt();
+            logger.WriteBarrierLine("0", "Back");
+            logger.WriteBarrierLine("1", "Custom MAC");
+            logger.WriteBarrierLine("2", "Random MAC");
+            Console.Write("-> ");
+            ConsoleKey choice = Console.ReadKey().Key;
+            if (choice == ConsoleKey.D0) { MainMenu(logger); }
+            if (choice == ConsoleKey.D1)
             {
-                UI.WriteLine("Put Your MAC You Want");
-                UI.WriteSpacing(true);
-                UI.WriteSpacing(false);
-                Console.Write("   -> ");
+                logger.Write("Put Your MAC You Want");
+                Console.Write("-> ");
                 string mac = Console.ReadLine();
                 Spoof.SpoofMAC(false, mac);
             }
-            else if (choice == "2")
+            else if (choice == ConsoleKey.D2)
             {
                 Spoof.SpoofMAC(true, null);
             }
-            MACSpoof();
+            MACSpoof(logger);
         }
-        public static void PCSpoof()
+        public static void NetworkSpoof(Logger logger)
         {
             Console.Clear();
             Console.Title = "Fish Spoofer";
-            Console.WriteLine();
-            UI.WriteLineAlt("Fish Spoofer");
-            UI.WriteSpacing(true);
-            UI.WriteBarrierLine("0", "Back");
-            UI.WriteBarrierLine("1", "Spoof Disks");
-            UI.WriteBarrierLine("2", "Spoof GUID");
-            UI.WriteSpacing(true);
-            UI.WriteSpacing(false);
-            Console.Write("   -> ");
-            string choice = Console.ReadLine();
-            if (choice == "0") { Main(null); }
-            if (choice == "1") { Spoof.SpoofDisks(); }
-            if (choice == "2") { Spoof.SpoofGUID(); }
-            PCSpoof();
-        }
-        public static void NetworkSpoof()
-        {
-            Console.Clear();
-            Console.Title = "Fish Spoofer";
-            Console.WriteLine();
-            UI.WriteLineAlt("Fish Spoofer");
-            UI.WriteSpacing(true);
-            UI.WriteBarrierLine("0", "Back");
-            UI.WriteBarrierLine("1", "Fix Network");
-            UI.WriteBarrierLine("2", "Flush DNS");
-            UI.WriteSpacing(true);
-            UI.WriteSpacing(false);
-            Console.Write("   -> ");
-            string choice = Console.ReadLine();
-            if (choice == "0") { Main(null); }
-            if (choice == "1")
+            logger.PrintArt();
+            logger.WriteBarrierLine("0", "Back");
+            logger.WriteBarrierLine("1", "Fix Network");
+            logger.WriteBarrierLine("2", "Flush DNS");
+            Console.Write("-> ");
+            ConsoleKey choice = Console.ReadKey().Key;
+            if (choice == ConsoleKey.D0) { MainMenu(logger); }
+            if (choice == ConsoleKey.D1)
             {
                 var NetworkAdapters = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e972-e325-11ce-bfc1-08002be10318}");
                 foreach (string adapter in NetworkAdapters.GetSubKeyNames())
@@ -140,35 +115,35 @@ namespace Fish_Spoofer
                     }
                 }
             }
-            if (choice == "2") { Spoof.FlushDNS(); }
-            NetworkSpoof();
+            if (choice == ConsoleKey.D2) { Spoof.FlushDNS(); }
+            NetworkSpoof(logger);
         }
     }
 
     public class Spoof
     {
-        public static void SpoofEAC()
+        public static void SpoofEAC(Logger logger)
         {
             try
             {
-                Utils.DownloadAndStartDriver(Program.KDMapperURL, Program.drvURL, Program.MapExePath, Program.MapdrvPath);
-                UI.WriteLine("New disk serial : " + GetHardDiskSerialNo());
+                Utils.DownloadAndStartDriver(Program.KDMapperURL, Program.drvURL, Program.MapExePath, Program.MapdrvPath, logger);
+                logger.Debug($"New disk serial : {GetHardDiskSerialNo()}");
             }
             catch (Exception ex)
             {
-                UI.WriteLine("Error: " + ex.Message);
+                logger.Error("Error: " + ex.Message);
             }
         }
-        public static void SpoofBE()
+        public static void SpoofBE(Logger logger)
         {
             try
             {
-                Utils.DownloadAndStartDriver(Program.KDMapperURL, Program.drvURL, Program.MapExePath, Program.MapdrvPath);
-                UI.WriteLine("New disk serial : [N/A]");
+                Utils.DownloadAndStartDriver(Program.KDMapperURL, Program.drvURL, Program.MapExePath, Program.MapdrvPath, logger);
+                logger.Debug($"New disk serial : {GetHardDiskSerialNo()}");
             }
             catch (Exception ex)
             {
-                UI.WriteLine("Error: " + ex.Message);
+                logger.Error("Error: " + ex.Message);
             }
         }
         public static string GetHardDiskSerialNo()
@@ -218,17 +193,14 @@ namespace Fish_Spoofer
                         {
                             using (RegistryKey registryKey3 = Registry.LocalMachine.OpenSubKey(string.Concat(new string[] { "HARDWARE\\DEVICEMAP\\Scsi\\", text, "\\", text2, "\\Target Id 0\\Logical Unit Id 0" }), true))
                             {
-                                if (registryKey3 != null)
+                                if (registryKey3 != null && registryKey3.GetValue("DeviceType").ToString() == "DiskPeripheral")
                                 {
-                                    if (registryKey3.GetValue("DeviceType").ToString() == "DiskPeripheral")
-                                    {
-                                        string text3 = Utils.RandomId(14);
-                                        string text4 = Utils.RandomId(14);
-                                        registryKey3.SetValue("DeviceIdentifierPage", Encoding.UTF8.GetBytes(text4));
-                                        registryKey3.SetValue("Identifier", text3);
-                                        registryKey3.SetValue("InquiryData", Encoding.UTF8.GetBytes(text3));
-                                        registryKey3.SetValue("SerialNumber", text4);
-                                    }
+                                    string text3 = Utils.RandomId(14);
+                                    string text4 = Utils.RandomId(14);
+                                    registryKey3.SetValue("DeviceIdentifierPage", Encoding.UTF8.GetBytes(text4));
+                                    registryKey3.SetValue("Identifier", text3);
+                                    registryKey3.SetValue("InquiryData", Encoding.UTF8.GetBytes(text3));
+                                    registryKey3.SetValue("SerialNumber", text4);
                                 }
                             }
                         }
@@ -306,108 +278,29 @@ namespace Fish_Spoofer
         }
     }
 
-    public class UI
-    {
-        public static ConsoleColor color = ConsoleColor.DarkBlue;
-        public static void WriteLine(string line)
-        {
-            Console.Write("  ");
-            Thread.Sleep(20);
-            Console.BackgroundColor = color;
-            Console.ForegroundColor = color;
-            Console.Write(" ");
-            Console.ResetColor();
-            Thread.Sleep(20);
-            Console.Write("  ");
-            for (int i = 0; i < line.Length; i++)
-            {
-                Console.Write(line[i]);
-                Thread.Sleep(20);
-            }
-            Thread.Sleep(20);
-            Console.WriteLine();
-        }
-        public static void WriteLineAlt(string line)
-        {
-            Console.Write("  ");
-            Console.BackgroundColor = color;
-            Console.ForegroundColor = color;
-            Console.Write(" ");
-            Console.ResetColor();
-            Console.Write("  ");
-            Console.Write(line);
-            Thread.Sleep(20);
-            Console.WriteLine();
-        }
-        public static void WriteBarrierLine(string num, string line)
-        {
-            Console.Write("  ");
-            Thread.Sleep(20);
-            Console.BackgroundColor = color;
-            Console.ForegroundColor = color;
-            Console.Write(" ");
-            Console.ResetColor();
-            Console.Write("  [");
-            Thread.Sleep(20);
-            Console.ForegroundColor = color;
-            Console.Write(num);
-            Console.ResetColor();
-            Thread.Sleep(20);
-            Console.Write("] ");
-            for (int i = 0; i < line.Length; i++)
-            {
-                Console.Write(line[i]);
-                Thread.Sleep(20);
-            }
-            Thread.Sleep(20);
-            Console.WriteLine();
-        }
-        public static void WriteSpacing(bool writeline)
-        {
-            if (!writeline)
-            {
-                Console.Write("  ");
-                Thread.Sleep(20);
-                Console.BackgroundColor = color;
-                Console.ForegroundColor = color;
-                Console.Write(" ");
-                Console.ResetColor();
-            }
-            if (writeline)
-            {
-                Console.Write("  ");
-                Thread.Sleep(20);
-                Console.BackgroundColor = color;
-                Console.ForegroundColor = color;
-                Console.WriteLine(" ");
-                Console.ResetColor();
-            }
-        }
-    }
-
     public class Utils
     {
-        public static void DownloadAndStartDriver(string kdmapperUrl, string drvUrl, string mapExePath, string mapDrvPath)
+        public static void DownloadAndStartDriver(string kdmapperUrl, string drvUrl, string mapExePath, string mapDrvPath, Logger logger)
         {
             using (WebClient webClient = new WebClient())
             {
-                UI.WriteLine("Downloading Driver...");
+                logger.Debug("Downloading Driver...");
                 webClient.DownloadFile(kdmapperUrl, mapExePath);
                 webClient.DownloadFile(drvUrl, mapDrvPath);
                 Thread.Sleep(500);
-                UI.WriteLine("Downloaded Driver.");
+                logger.Debug("Downloaded Driver.");
 
-                UI.WriteLine("Attempting to start driver...");
+                logger.Debug("Attempting to start driver...");
                 Start(mapExePath, mapDrvPath);
-                UI.WriteLine("Driver started.");
+                logger.Debug("Driver started.");
 
-                UI.WriteLine("Restarting Host...");
+                logger.Debug("Restarting Host...");
                 foreach (var process in Process.GetProcessesByName("WmiPrvSE")) { process.Kill(); }
-                UI.WriteLine("WMI Host Restarted.");
+                logger.Debug("WMI Host Restarted.");
 
                 File.Delete(mapExePath);
                 File.Delete(mapDrvPath);
-                UI.WriteLine("Driver Deleted.");
+                logger.Debug("Driver Deleted.");
             }
         }
         public static void Start(string path, string optional = "")
